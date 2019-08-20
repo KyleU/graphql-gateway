@@ -1,24 +1,24 @@
 name := "graphql-gateway"
-organization := "org.sangria-graphql"
-version := "0.1.0-SNAPSHOT"
+organization := "kyleu.com"
+version := "1.0.0"
 
 description := "GraphQL Gateway - SDL-based GraphQL gateway for REST and GraphQL-based microservices"
 homepage := Some(url("http://sangria-graphql.org"))
 licenses := Seq("Apache License, ASL Version 2.0" → url("http://www.apache.org/licenses/LICENSE-2.0"))
 
-scalaVersion := "2.12.4"
+scalaVersion := "2.12.9"
 
 scalacOptions ++= Seq("-deprecation", "-feature")
 
 mainClass in Compile := Some("sangria.gateway.Main")
 
-val sangriaVersion = "1.4.2-SNAPSHOT"
+val sangriaVersion = "1.4.3"
 val circeVersion = "0.9.2"
 
 libraryDependencies ++= Seq(
-  "org.sangria-graphql" %% "sangria" % sangriaVersion,
-  "org.sangria-graphql" %% "sangria-slowlog" % "0.1.5",
-  "org.sangria-graphql" %% "sangria-circe" % "1.2.1",
+  "kyleu.com" %% "sangria" % sangriaVersion,
+  "kyleu.com" %% "sangria-slowlog" % "0.1.5",
+  "kyleu.com" %% "sangria-circe" % "1.2.1",
 
   "com.typesafe.akka" %% "akka-http" % "10.1.0",
   "com.typesafe.akka" %% "akka-slf4j" % "2.5.11",
@@ -33,6 +33,8 @@ libraryDependencies ++= Seq(
   "io.circe" %% "circe-optics" % circeVersion,
 
   "com.jayway.jsonpath" % "json-path" % "2.3.0",
+
+  "com.typesafe.play" %% "play-ahc-ws-standalone" % "1.1.9",
 
   "com.iheart" %% "ficus" % "1.4.3",
   "com.github.javafaker" % "javafaker" % "0.14",
