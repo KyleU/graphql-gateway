@@ -23,18 +23,18 @@ import scala.concurrent.{ExecutionContext, Future}
 
 case class GatewayContext(client: HttpClient, rnd: Option[Random], faker: Option[Faker], vars: Json, graphqlIncludes: Vector[GraphQLIncludedSchema], operationName: Option[String] = None, queryVars: Json = Json.obj()) {
   import GatewayContext._
-  
+
   val allTypes = graphqlIncludes.flatMap(_.types)
 
   def request(schema: GraphQLIncludedSchema, query: ast.Document, variables: Json, extractName: String)(implicit ec: ExecutionContext): Future[Json] = {
-    val fields = Vector("query" → Json.fromString(query.renderPretty))
+    val fields = Vector("query" -> Json.fromString(query.renderPretty))
     val withVars =
-      if (variables != Json.obj()) fields :+ ("variables" → variables)
+      if (variables != Json.obj()) fields :+ ("variables" -> variables)
       else fields
 
     val body = Json.fromFields(withVars)
 
-    client.request(HttpClient.Method.Post, schema.include.url, body = Some("application/json" → body.noSpaces)).flatMap(GatewayContext.parseJson).map(resp ⇒
+    client.request(HttpClient.Method.Post, schema.include.url, body = Some("application/json" -> body.noSpaces)).flatMap(GatewayContext.parseJson).map(resp ⇒
       root.data.at(extractName).getOption(resp).flatten.get)
   }
 
@@ -124,15 +124,15 @@ object GatewayContext extends Logging {
 
     resolveDirectives(schemaAst,
       GenericDirectiveResolver(Dirs.FakeConfig,
-        resolve = c ⇒ Some(c.arg(Args.Locale).map(Locale.forLanguageTag) → c.arg(Args.Seed)))).headOption.getOrElse(None → None)
+        resolve = c ⇒ Some(c.arg(Args.Locale).map(Locale.forLanguageTag) -> c.arg(Args.Seed)))).headOption.getOrElse(None -> None)
   }
 
   def loadIncludedSchemas(client: HttpClient, includes: Vector[GraphQLInclude])(implicit ec: ExecutionContext): Future[Vector[GraphQLIncludedSchema]] = {
     val loaded =
       includes.map { include ⇒
-        val introspectionBody = Json.obj("query" → Json.fromString(sangria.introspection.introspectionQuery.renderPretty))
+        val introspectionBody = Json.obj("query" -> Json.fromString(sangria.introspection.introspectionQuery.renderPretty))
 
-        client.request(HttpClient.Method.Post, include.url, body = Some("application/json" → introspectionBody.noSpaces)).flatMap(parseJson).map(resp ⇒
+        client.request(HttpClient.Method.Post, include.url, body = Some("application/json" -> introspectionBody.noSpaces)).flatMap(parseJson).map(resp ⇒
           GraphQLIncludedSchema(include, Schema.buildFromIntrospection(resp)))
       }
 
@@ -147,9 +147,9 @@ object GatewayContext extends Logging {
     val (rnd, faker) =
       if (config isEnabled "faker") {
         val rnd = fakerSeed.fold(new Random(System.currentTimeMillis()))(s ⇒ new Random(s.toLong))
-        
-        Some(rnd) → Some(fakerLocale.fold(new Faker(rnd))(l ⇒ new Faker(l, rnd)))
-      } else None → None
+
+        Some(rnd) -> Some(fakerLocale.fold(new Faker(rnd))(l ⇒ new Faker(l, rnd)))
+      } else None -> None
 
     loadIncludedSchemas(client, includes).map(GatewayContext(client, rnd, faker, vars, _))
   }
@@ -161,7 +161,7 @@ object GatewayContext extends Logging {
   }
 
   def convertArgs(args: Args, field: ast.Field): Json =
-    Json.fromFields(args.raw.keys.flatMap(name ⇒ field.arguments.find(_.name == name).map(a ⇒ a.name → a.value.convertMarshaled[Json])))
+    Json.fromFields(args.raw.keys.flatMap(name ⇒ field.arguments.find(_.name == name).map(a ⇒ a.name -> a.value.convertMarshaled[Json])))
 
   private val PlaceholderRegExp = """\$\{([^}]+)\}""".r
 

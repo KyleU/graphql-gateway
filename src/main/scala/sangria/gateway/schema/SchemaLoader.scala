@@ -24,10 +24,10 @@ class SchemaLoader(config: AppConfig, client: HttpClient, mat: GatewayMaterializ
     if (files.nonEmpty) {
       val parsed =
         files.map {
-          case (path, content) ⇒ path → QueryParser.parse(content)
+          case (path, content) ⇒ path -> QueryParser.parse(content)
         }
 
-      val failed = parsed.collect {case (path, Failure(e)) ⇒ path → e}
+      val failed = parsed.collect {case (path, Failure(e)) ⇒ path -> e}
 
       if (failed.nonEmpty) {
         failed.foreach { case (path, error) ⇒
@@ -36,15 +36,15 @@ class SchemaLoader(config: AppConfig, client: HttpClient, mat: GatewayMaterializ
 
         Future.successful(None)
       } else {
-        val successful = parsed.collect {case (path, Success(doc)) ⇒ path → doc}
+        val successful = parsed.collect {case (path, Success(doc)) ⇒ path -> doc}
         val document = Document.merge(successful.map(_._2))
 
         try {
           val info =
             for {
-              ctx ← GatewayContext.loadContext(config, client, document)
+              ctx <- GatewayContext.loadContext(config, client, document)
               schema = Schema.buildFromAst(document, mat.schemaBuilder(ctx).validateSchemaWithException(document))
-              intro ← executeIntrospection(schema, ctx)
+              intro <- executeIntrospection(schema, ctx)
             } yield Some(SchemaInfo(
               schema,
               ctx,

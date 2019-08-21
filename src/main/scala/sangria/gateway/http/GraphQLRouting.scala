@@ -80,18 +80,18 @@ class GraphQLRouting[Val](config: AppConfig, schemaProvider: SchemaProvider[Gate
         case Some(source) ⇒
           complete(source.filter(identity).map(_ ⇒ ServerSentEvent("changed")))
         case None ⇒
-          complete(200 → "Schema reloading is disabled")
+          complete(200 -> "Schema reloading is disabled")
       }
     } ~
     (get & path("schema.json")) {
       complete(schemaProvider.schemaInfo.map {
-        case Some(info) ⇒ TRM(OK → info.schemaIntrospection)
+        case Some(info) ⇒ TRM(OK -> info.schemaIntrospection)
         case None ⇒ noSchema
       })
     } ~
     (get & path("schema.graphql")) {
       complete(schemaProvider.schemaInfo.map {
-        case Some(info) ⇒ TRM(OK → HttpEntity(`application/graphql`, info.schemaRendered))
+        case Some(info) ⇒ TRM(OK -> HttpEntity(`application/graphql`, info.schemaRendered))
         case None ⇒ noSchema
       })
     } ~
@@ -126,7 +126,7 @@ class GraphQLRouting[Val](config: AppConfig, schemaProvider: SchemaProvider[Gate
     else
       withSlowLog
   }
-  
+
   def executeGraphQL(query: Document, operationName: Option[String], variables: Json) =
     complete(schemaProvider.schemaInfo.flatMap {
       case Some(schemaInfo) ⇒
@@ -140,22 +140,22 @@ class GraphQLRouting[Val](config: AppConfig, schemaProvider: SchemaProvider[Gate
           middleware = middleware ++ schemaInfo.middleware,
           exceptionHandler = exceptionHandler,
           deferredResolver = schemaInfo.deferredResolver)
-            .map(res ⇒ TRM(OK → res))
+            .map(res ⇒ TRM(OK -> res))
             .recover {
-              case error: QueryAnalysisError ⇒ TRM(BadRequest → error.resolveError)
-              case error: ErrorWithResolver ⇒ TRM(InternalServerError → error.resolveError)
+              case error: QueryAnalysisError ⇒ TRM(BadRequest -> error.resolveError)
+              case error: ErrorWithResolver ⇒ TRM(InternalServerError -> error.resolveError)
             }
       case None ⇒ Future.successful(noSchema)
     })
 
   def formatError(error: Throwable): Json = error match {
     case syntaxError: SyntaxError ⇒
-      Json.obj("errors" → Json.arr(
+      Json.obj("errors" -> Json.arr(
       Json.obj(
-        "message" → Json.fromString(syntaxError.getMessage),
-        "locations" → Json.arr(Json.obj(
-          "line" → Json.fromBigInt(syntaxError.originalError.position.line),
-          "column" → Json.fromBigInt(syntaxError.originalError.position.column))))))
+        "message" -> Json.fromString(syntaxError.getMessage),
+        "locations" -> Json.arr(Json.obj(
+          "line" -> Json.fromBigInt(syntaxError.originalError.position.line),
+          "column" -> Json.fromBigInt(syntaxError.originalError.position.column))))))
     case NonFatal(e) ⇒
       formatError(e.getMessage)
     case e ⇒
@@ -163,9 +163,9 @@ class GraphQLRouting[Val](config: AppConfig, schemaProvider: SchemaProvider[Gate
   }
 
   def formatError(message: String): Json =
-    Json.obj("errors" → Json.arr(Json.obj("message" → Json.fromString(message))))
+    Json.obj("errors" -> Json.arr(Json.obj("message" -> Json.fromString(message))))
 
-  def noSchema = TRM(InternalServerError → "No schema defined")
+  def noSchema = TRM(InternalServerError -> "No schema defined")
 
   val exceptionHandler = ExceptionHandler {
     case (m, error: TooComplexQueryError) ⇒ HandledException(error.getMessage)

@@ -21,7 +21,7 @@ class HttpDirectiveProvider(client: HttpClient)(implicit ec: ExecutionContext) e
         val args = Some(convertArgs(c.ctx.args, c.ctx.astFields.head))
 
         def extractMap(in: Option[scala.Seq[InputObjectType.DefaultInput]], elem: Json) =
-          rawHeaders.map(_.map(h ⇒ h("name").asInstanceOf[String] → c.ctx.ctx.fillPlaceholders(c.ctx, h("value").asInstanceOf[String], args, elem))).getOrElse(Nil)
+          rawHeaders.map(_.map(h ⇒ h("name").asInstanceOf[String] -> c.ctx.ctx.fillPlaceholders(c.ctx, h("value").asInstanceOf[String], args, elem))).getOrElse(Nil)
 
         def makeRequest(tpe: OutputType[_], c: Context[GatewayContext, _], args: Option[Json], elem: Json = Json.Null) = {
           val url = c.ctx.fillPlaceholders(c, rawUrl, args, elem)

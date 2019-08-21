@@ -26,10 +26,10 @@ class GatewayServer extends Logging {
   val client = new PlayHttpClient(new StandaloneAhcWSClient(new DefaultAsyncHttpClient))
 
   val directiveProviders = Map(
-    "http" → new HttpDirectiveProvider(client),
-    "graphql" → new GraphQLDirectiveProvider,
-    "faker" → new FakerDirectiveProvider,
-    "basic" → new BasicDirectiveProvider)
+    "http" -> new HttpDirectiveProvider(client),
+    "graphql" -> new GraphQLDirectiveProvider,
+    "faker" -> new FakerDirectiveProvider,
+    "basic" -> new BasicDirectiveProvider)
 
   def startup(config: AppConfig) =
     try {

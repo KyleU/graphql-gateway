@@ -150,7 +150,7 @@ object JsonPathValueWrapper {
     case arr: java.util.ArrayList[_] ⇒
       Json.arr(arr.asScala.map(toJson): _*)
     case obj: java.util.LinkedHashMap[String, Any] @unchecked ⇒
-      Json.obj(obj.asScala.toSeq.map{case (k, v) ⇒ k → toJson(v)}: _*)
+      Json.obj(obj.asScala.toSeq.map{case (k, v) ⇒ k -> toJson(v)}: _*)
     case json: Json ⇒
       json
     case v: String ⇒

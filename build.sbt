@@ -4,7 +4,7 @@ version := "1.0.0"
 
 description := "GraphQL Gateway - SDL-based GraphQL gateway for REST and GraphQL-based microservices"
 homepage := Some(url("http://sangria-graphql.org"))
-licenses := Seq("Apache License, ASL Version 2.0" → url("http://www.apache.org/licenses/LICENSE-2.0"))
+licenses := Seq("Apache License, ASL Version 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0"))
 
 scalaVersion := "2.12.9"
 
