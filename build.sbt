@@ -12,13 +12,13 @@ scalacOptions ++= Seq("-deprecation", "-feature")
 
 mainClass in Compile := Some("sangria.gateway.Main")
 
-val sangriaVersion = "1.4.3"
+val sangriaVersion = "1.4.2-SNAPSHOT"
 val circeVersion = "0.9.2"
 
 libraryDependencies ++= Seq(
-  "kyleu.com" %% "sangria" % sangriaVersion,
-  "kyleu.com" %% "sangria-slowlog" % "0.1.5",
-  "kyleu.com" %% "sangria-circe" % "1.2.1",
+  "org.sangria-graphql" %% "sangria" % sangriaVersion,
+  "org.sangria-graphql" %% "sangria-slowlog" % "0.1.5",
+  "org.sangria-graphql" %% "sangria-circe" % "1.2.1",
 
   "com.typesafe.akka" %% "akka-http" % "10.1.0",
   "com.typesafe.akka" %% "akka-slf4j" % "2.5.11",
@@ -54,3 +54,15 @@ resolvers += "Sonatype snapshots" at "https://oss.sonatype.org/content/repositor
 shellPrompt in ThisBuild := { state ⇒
   scala.Console.MAGENTA + Project.extract(state).currentRef.project + "> " + scala.Console.RESET
 }
+
+scmInfo := Some(ScmInfo(url("https://github.com/KyleU/graphql-gateway"), "scm:git@github.com:KyleU/graphql-gateway.git"))
+developers := List(
+  Developer(id = "kyleu", name = "Kyle Unverferth", email = "opensource@kyleu.com", url = url("http://kyleu.com")),
+  Developer(id = "OlegIlyenko", name = "Oleg Ilyenko", email = "", url = url("https://github.com/OlegIlyenko"))
+)
+
+publishMavenStyle := true
+publishTo := xerial.sbt.Sonatype.SonatypeKeys.sonatypePublishTo.value
+
+useGpg := true
+pgpSecretRing := file("/Users/kyle/.gnupg/pubring.kbx")
